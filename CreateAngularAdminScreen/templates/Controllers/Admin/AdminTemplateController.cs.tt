@@ -1,0 +1,125 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+﻿<#@ assembly name="D:\Dev\CreateAngularAdminScreen\CreateAngularAdminScreen\Utilities\bin\Debug\Utilities.dll" #>
+<#@ assembly name="D:\Dev\CreateAngularAdminScreen\CreateAngularAdminScreen\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="Utilities" #>
+﻿<#@ import namespace="Newtonsoft.Json" #>
+<#
+    string jsonParameters = File.ReadAllText(".\\jsonParameters.json");
+	Parameters parameters = new Parameters();
+	parameters = JsonConvert.DeserializeObject<Parameters>(jsonParameters);
+#>
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using NikeaaDesignWebsite.Models;
+
+namespace NikeaaDesignWebsite.Api.Admin
+{
+	[Route("api/admin/<#= parameters.DashName #>")]
+	[ApiController]
+	public class <#= parameters.CamelCaseName #>Controller : ControllerBase
+	{
+		private readonly NikeaaDesignDBContext _context;
+
+		public <#= parameters.CamelCaseName #>Controller(NikeaaDesignDBContext context)
+		{
+			_context = context;
+		}
+
+		// GET: api/admin/<#= parameters.DashName #>
+		[HttpGet]
+		public async Task<ActionResult<IEnumerable<<#= parameters.CamelCaseName #>>>> Get<#= parameters.CamelCaseName #>(int? page, int? size)
+		{
+			IQueryable<<#= parameters.CamelCaseName #>> data = _context.<#= parameters.CamelCaseName #>;
+
+			if (page != null && size != null)
+			{
+				data = data.Skip(((int)page - 1) * (int)size).Take((int)size);
+			}
+
+			return await data.ToListAsync();
+		}
+
+		// GET: api/admin/<#= parameters.DashName #>/5
+		[HttpGet("{id}")]
+		public async Task<ActionResult<<#= parameters.CamelCaseName #>>> Get<#= parameters.CamelCaseName #>(int id)
+		{
+			var <#= parameters.CamelCaseName #> = await _context.<#= parameters.CamelCaseName #>.FindAsync(id);
+
+			if (<#= parameters.CamelCaseName #> == null)
+			{
+				return NotFound();
+			}
+
+			return <#= parameters.CamelCaseName #>;
+		}
+
+		// PUT: api/admin/<#= parameters.DashName #>/5
+		// To protect from overposting attacks, enable the specific properties you want to bind to, for
+		// more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+		[HttpPut("{id}")]
+		public async Task<IActionResult> Put<#= parameters.CamelCaseName #>(int id, <#= parameters.CamelCaseName #> <#= parameters.LowerCamelCaseName #>)
+		{
+			if (id != <#= parameters.LowerCamelCaseName #>.Id)
+			{
+				return BadRequest();
+			}
+
+			_context.Entry(<#= parameters.CamelCaseName #>).State = EntityState.Modified;
+
+			try
+			{
+				await _context.SaveChangesAsync();
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				if (!<#= parameters.CamelCaseName #>Exists(id))
+				{
+					return NotFound();
+				}
+				else
+				{
+					throw;
+				}
+			}
+
+			return NoContent();
+		}
+
+		// POST: api/admin/<#= parameters.DashName #>
+		// To protect from overposting attacks, enable the specific properties you want to bind to, for
+		// more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+		[HttpPost]
+		public async Task<ActionResult<<#= parameters.CamelCaseName #>>> Post<#= parameters.CamelCaseName #>(<#= parameters.CamelCaseName #> <#= parameters.LowerCamelCaseName #>)
+		{
+			_context.<#= parameters.CamelCaseName #>.Add(<#= parameters.LowerCamelCaseName #>);
+			await _context.SaveChangesAsync();
+
+			return CreatedAtAction("Get<#= parameters.CamelCaseName #>", new { id = <#= parameters.LowerCamelCaseName #>.Id }, <#= parameters.CamelCaseName #>);
+		}
+
+		// DELETE: api/admin/<#= parameters.DashName #>/5
+		[HttpDelete("{id}")]
+		public async Task<ActionResult<<#= parameters.CamelCaseName #>>> Delete<#= parameters.CamelCaseName #>(int id)
+		{
+			<#= parameters.CamelCaseName #> <#= parameters.LowerCamelCaseName #> = await _context.<#= parameters.CamelCaseName #>.FindAsync(id);
+			if (<#= parameters.LowerCamelCaseName #> == null)
+			{
+				return NotFound();
+			}
+
+			_context.<#= parameters.CamelCaseName #>.Remove(<#= parameters.LowerCamelCaseName #>);
+			await _context.SaveChangesAsync();
+
+			return <#= parameters.LowerCamelCaseName #>;
+		}
+
+		private bool <#= parameters.CamelCaseName #>Exists(int id)
+		{
+			return _context.<#= parameters.CamelCaseName #>.Any(e => e.Id == id);
+		}
+	}
+}

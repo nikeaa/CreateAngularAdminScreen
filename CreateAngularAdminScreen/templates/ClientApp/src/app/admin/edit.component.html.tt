@@ -1,0 +1,53 @@
+<#@ template debug="false" hostspecific="true" language="C#" #>
+﻿<#@ assembly name="D:\Dev\CreateAngularAdminScreen\CreateAngularAdminScreen\Utilities\bin\Debug\Utilities.dll" #>
+<#@ assembly name="D:\Dev\CreateAngularAdminScreen\CreateAngularAdminScreen\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="Utilities" #>
+﻿<#@ import namespace="Newtonsoft.Json" #>
+<#
+    string jsonParameters = File.ReadAllText(".\\jsonParameters.json");
+	Parameters parameters = new Parameters();
+	parameters = JsonConvert.DeserializeObject<Parameters>(jsonParameters);
+#>
+<div class="m-4">
+  <h2>Edit <#= parameters.TitleCaseName #></h2>
+  <hr />
+  <form *ngIf="record" [formGroup]="editForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-2">
+        <label>
+          Title:
+        </label>
+        <div *ngIf="vs.fieldIsInvalid(title)" class="d-inline">
+          <div *ngIf="vs.fieldIsRequired(formSubmitted, title)" class="d-inline error">
+            (required)
+          </div>
+        </div>
+        <input type="text" formControlName="title" class="form-control" [ngClass]="{ 'invalid': vs.fieldHasErrors(formSubmitted, title) }" />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-2">
+        <label>
+          Is Active:
+        </label>
+        <div *ngIf="vs.fieldIsInvalid(isActive)" class="d-inline">
+          <div *ngIf="vs.fieldIsRequired(formSubmitted, isActive)" class="d-inline error">
+            (required)
+          </div>
+        </div>
+        <select formControlName="isActive" class="form-control is-active" [ngClass]="{ 'invalid': vs.fieldHasErrors(formSubmitted, isActive) }">
+          <option value=""></option>
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col-4">
+        <button type="button" class="btn btn-primary mr-2" (click)="onCancelClick()">Cancel</button>
+        <button type="submit" class="btn btn-success">Submit</button>
+      </div>
+    </div>
+  </form>
+</div>

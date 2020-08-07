@@ -1,0 +1,40 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+﻿<#@ assembly name="D:\Dev\CreateAngularAdminScreen\CreateAngularAdminScreen\Utilities\bin\Debug\Utilities.dll" #>
+<#@ assembly name="D:\Dev\CreateAngularAdminScreen\CreateAngularAdminScreen\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="Utilities" #>
+﻿<#@ import namespace="Newtonsoft.Json" #>
+<#
+    string jsonParameters = File.ReadAllText(".\\jsonParameters.json");
+	Parameters parameters = new Parameters();
+	parameters = JsonConvert.DeserializeObject<Parameters>(jsonParameters);
+#>
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { <#= parameters.CamelCaseName #> } from './record';
+import { FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ServiceBase } from '../../service-base.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class <#= parameters.CamelCaseName #>Service extends ServiceBase<<#= parameters.CamelCaseName #>> {
+  apiUrl: string = 'api/admin/<#= parameters.DashName #>';
+  navigationUrl: string = '/admin/admin/<#= parameters.DashName #>';
+
+  constructor(http: HttpClient, routerService: Router) {
+    super(http, routerService);
+  }
+
+  buildServiceObject(form: FormGroup): <#= parameters.CamelCaseName #> {
+    const serviceObject: <#= parameters.CamelCaseName #> = {
+      id: 0,
+      title: form.controls.title.value,
+      isActive: form.controls.isActive.value == 'true' ? true : false,
+      isDeleting: false
+    };
+
+    return serviceObject;
+  }
+}

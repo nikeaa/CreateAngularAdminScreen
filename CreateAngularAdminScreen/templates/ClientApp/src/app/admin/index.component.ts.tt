@@ -1,0 +1,63 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+﻿<#@ assembly name="D:\Dev\CreateAngularAdminScreen\CreateAngularAdminScreen\Utilities\bin\Debug\Utilities.dll" #>
+<#@ assembly name="D:\Dev\CreateAngularAdminScreen\CreateAngularAdminScreen\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="Utilities" #>
+﻿<#@ import namespace="Newtonsoft.Json" #>
+<#
+    string jsonParameters = File.ReadAllText(".\\jsonParameters.json");
+    Parameters parameters = new Parameters();
+    parameters = JsonConvert.DeserializeObject<Parameters>(jsonParameters);
+#>
+import { AppComponent } from '../../app.component';
+import { Component, OnInit } from '@angular/core';
+import { <#= parameters.CamelCaseName #> } from '../../services/admin/template/record';
+import { <#= parameters.CamelCaseName #>Service } from '../../services/admin/template/service';
+import { Paging } from '../../paging';
+
+@Component({
+  selector: 'app-<#= parameters.DashName #>-component',
+  templateUrl: './index.component.html',
+  styleUrls: ['./index.component.css']
+})
+export class <#= parameters.CamelCaseName #>IndexComponent extends Paging implements OnInit {
+  allDataItems: <#= parameters.CamelCaseName #>[] = [];
+  dataItems: <#= parameters.CamelCaseName #>[] = [];
+  isDeleting = false;
+
+  constructor(
+    private dataService: <#= parameters.CamelCaseName #>Service
+  ) {
+    super();
+    this.pageSize = 2;
+    this.refreshItems = this.refreshDataItems;
+  }
+
+  ngOnInit() {
+    this.dataService.getAll().subscribe(i => {
+      this.allDataItems = i;
+      this.itemCount = i.length;
+      this.calculateFirstAndLastItem();
+      this.pageCount = this.calculatePageCount(this.itemCount, this.pageSize);
+      this.refreshItems();
+      AppComponent.component.loadingIndicatorOff();
+    });
+  }
+
+  onAddNewClick() {
+    this.dataService.navigateToCreate();
+  }
+
+  onEditClick(index: number) {
+    this.dataService.navigateToEdit(this.dataItems[index].id);
+  }
+
+  onDeleteClick(index: number) {
+    this.dataService.navigateToDelete(this.dataItems[index].id);
+  }
+
+  refreshDataItems() {
+    this.calculateFirstAndLastItem();
+    this.dataItems = this.allDataItems.slice(this.firstItemNumber - 1, this.lastItemNumber);
+  }
+}

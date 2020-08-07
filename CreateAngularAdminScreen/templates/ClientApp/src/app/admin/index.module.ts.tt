@@ -1,0 +1,43 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+﻿<#@ assembly name="D:\Dev\CreateAngularAdminScreen\CreateAngularAdminScreen\Utilities\bin\Debug\Utilities.dll" #>
+<#@ assembly name="D:\Dev\CreateAngularAdminScreen\CreateAngularAdminScreen\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="Utilities" #>
+﻿<#@ import namespace="Newtonsoft.Json" #>
+<#
+    string jsonParameters = File.ReadAllText(".\\jsonParameters.json");
+    Parameters parameters = new Parameters();
+    parameters = JsonConvert.DeserializeObject<Parameters>(jsonParameters);
+#>
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Routes, RouterModule } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+import { <#= parameters.CamelCaseName #>IndexComponent } from './index.component';
+import { <#= parameters.CamelCaseName #>CreateComponent } from './create.component';
+import { <#= parameters.CamelCaseName #>EditComponent } from './edit.component';
+import { <#= parameters.CamelCaseName #>DeleteComponent } from './delete.component';
+
+const routes: Routes = [
+  { path: '', component: <#= parameters.CamelCaseName #>IndexComponent },
+  { path: 'create', component: <#= parameters.CamelCaseName #>CreateComponent },
+  { path: 'edit/:id', component: <#= parameters.CamelCaseName #>EditComponent },
+  { path: 'delete/:id', component: <#= parameters.CamelCaseName #>DeleteComponent }
+];
+
+@NgModule({
+  declarations: [
+    <#= parameters.CamelCaseName #>IndexComponent,
+    <#= parameters.CamelCaseName #>CreateComponent,
+    <#= parameters.CamelCaseName #>EditComponent,
+    <#= parameters.CamelCaseName #>DeleteComponent
+  ],
+  imports: [
+    CommonModule,
+    RouterModule.forChild(routes),
+    ReactiveFormsModule,
+    FormsModule
+  ]
+})
+export class <#= parameters.CamelCaseName #>IndexModule { }
