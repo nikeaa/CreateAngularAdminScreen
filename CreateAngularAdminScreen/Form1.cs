@@ -61,6 +61,7 @@ namespace CreateAngularAdminScreen
 
 		private void GenerateCodeButton_Click(object sender, EventArgs e)
 		{
+			GenerateCodeButton.Enabled = false;
 			ProcessTemplates(OutputDirectorySearchDialog.SelectedPath, TitleCaseNameTextBox.Text, CamelCaseNameTextBox.Text, LowerCamelCaseNameTextBox.Text, DashNameTextBox.Text);
 		}
 
@@ -78,8 +79,11 @@ namespace CreateAngularAdminScreen
 
 			string[] fileNames = Directory.GetFileSystemEntries(templatesDirectory, "*", SearchOption.AllDirectories);
 
+			workingFilesStaticLabel.Visible = true;
+			workingFileLabel.Visible = true;
 			foreach (string fileName in fileNames)
 			{
+				workingFileLabel.Text = fileName;
 				FileAttributes fileAttributes = File.GetAttributes(fileName);
 				if ((fileAttributes & FileAttributes.Directory) != FileAttributes.Directory)
 				{ // it's a file, so process it.
@@ -104,6 +108,19 @@ namespace CreateAngularAdminScreen
 					outputFileName = Path.Combine(outputPath, outputFileName);
 
 					File.WriteAllText(outputFileName, output, host.FileEncoding);
+				}
+			}
+
+			// Add new route to app.module.ts file
+			string whereToAddNewRoute = "/*** Add New Paths Here ***/";
+			string newRouteTemplate = "{ path: 'admin/admin-template', loadChildren: () => import('./admin/admin-template/index.module').then(m => m.AdminTemplateIndexModule) },\r\n      ";
+			string appModulePath = outputBasePath + "\\ClientApp\\src\\app\\app.module.ts";
+			if (File.Exists(appModulePath)) {
+				string appModuleCode = File.ReadAllText(appModulePath);
+				if (appModuleCode.IndexOf(whereToAddNewRoute) > -1) {
+					string newRoute = newRouteTemplate.Replace("admin-template", dashName).Replace("AdminTemplate", camelCaseName);
+					appModuleCode = appModuleCode.Replace(whereToAddNewRoute, newRoute + whereToAddNewRoute);
+					File.WriteAllText(appModulePath, appModuleCode);
 				}
 			}
 

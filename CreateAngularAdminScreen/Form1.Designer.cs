@@ -41,6 +41,8 @@
 			this.DashNameTextBox = new System.Windows.Forms.TextBox();
 			this.GenerateCodeButton = new System.Windows.Forms.Button();
 			this.OutputDirectorySearchDialog = new System.Windows.Forms.FolderBrowserDialog();
+			this.workingFilesStaticLabel = new System.Windows.Forms.Label();
+			this.workingFileLabel = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -148,11 +150,32 @@
 			// 
 			this.OutputDirectorySearchDialog.SelectedPath = "D:\\Dev";
 			// 
+			// workingFilesStaticLabel
+			// 
+			this.workingFilesStaticLabel.AutoSize = true;
+			this.workingFilesStaticLabel.Location = new System.Drawing.Point(108, 173);
+			this.workingFilesStaticLabel.Name = "workingFilesStaticLabel";
+			this.workingFilesStaticLabel.Size = new System.Drawing.Size(56, 13);
+			this.workingFilesStaticLabel.TabIndex = 12;
+			this.workingFilesStaticLabel.Text = "Working...";
+			this.workingFilesStaticLabel.Visible = false;
+			// 
+			// workingFileLabel
+			// 
+			this.workingFileLabel.AutoSize = true;
+			this.workingFileLabel.Location = new System.Drawing.Point(184, 173);
+			this.workingFileLabel.Name = "workingFileLabel";
+			this.workingFileLabel.Size = new System.Drawing.Size(0, 13);
+			this.workingFileLabel.TabIndex = 13;
+			this.workingFileLabel.Visible = false;
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(729, 188);
+			this.ClientSize = new System.Drawing.Size(729, 204);
+			this.Controls.Add(this.workingFileLabel);
+			this.Controls.Add(this.workingFilesStaticLabel);
 			this.Controls.Add(this.GenerateCodeButton);
 			this.Controls.Add(this.DashNameTextBox);
 			this.Controls.Add(this.LowerCamelCaseNameTextBox);
@@ -187,6 +210,8 @@
 		private System.Windows.Forms.TextBox DashNameTextBox;
 		private System.Windows.Forms.Button GenerateCodeButton;
 		private System.Windows.Forms.FolderBrowserDialog OutputDirectorySearchDialog;
+		private System.Windows.Forms.Label workingFilesStaticLabel;
+		private System.Windows.Forms.Label workingFileLabel;
 	}
 }
 
