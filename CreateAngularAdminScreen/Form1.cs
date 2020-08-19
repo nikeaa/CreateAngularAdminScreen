@@ -2,7 +2,10 @@
 using Newtonsoft.Json;
 using System;
 using System.CodeDom.Compiler;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using TextTemplating;
 using Utilities;
@@ -74,6 +77,26 @@ namespace CreateAngularAdminScreen
 			parameters.LowerCamelCaseName = lowerCamelCaseName;
 			parameters.DashName = dashName;
 			parameters.TitleCaseName = titleCaseName;
+
+			// get db columns
+			using (SqlConnection db = new SqlConnection("Data Source=(localdb)\\ProjectsV13;Initial Catalog=NikeaaDesignDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;"))
+			{
+				db.Open();
+
+				String[] tableRestrictions = new String[4];
+				tableRestrictions[2] = "AdminTemplate";
+				DataTable schema = db.GetSchema("Columns", tableRestrictions);
+				var selectedRows = (from info in schema.AsEnumerable()
+								   select new Column
+								   {
+									   ColumnName = info["COLUMN_NAME"].ToString(),
+									   DataType = info["DATA_TYPE"].ToString()
+								   }).ToArray();
+				parameters.DbColumns = selectedRows;
+
+				db.Close();
+			}
+
 			string jsonParameters = JsonConvert.SerializeObject(parameters);
 			File.WriteAllText("jsonParameters.json", jsonParameters);
 
@@ -124,22 +147,9 @@ namespace CreateAngularAdminScreen
 				}
 			}
 
-			//CustomTextTemplatingHost host = new CustomTextTemplatingHost();
-			//Engine engine = new Engine();
-			//host.TemplateFile = templateFileName;
-			//Read the text template.
-			//string input = File.ReadAllText(templateFileName);
-			//Transform the text template.
-			//string output = engine.ProcessTemplate(input, host);
-			//string outputFileName = Path.GetFileNameWithoutExtension(templateFileName);
-			//outputFileName = Path.Combine(Path.GetDirectoryName(templateFileName), outputFileName);
-			//outputFileName = outputFileName + host.FileExtension;
-			//File.WriteAllText(outputFileName, output, host.FileEncoding);
-
-			//foreach (CompilerError error in host.Errors)
-			//{
-			//	Console.WriteLine(error.ToString());
-			//}
+			workingFileLabel.Visible = false;
+			workingFilesStaticLabel.Visible = false;
+			GenerateCodeButton.Enabled = true;
 		}
 	}
 }

@@ -1,1 +1,1 @@
-{"CamelCaseName":"MyNewestScreen","LowerCamelCaseName":"myNewestScreen","DashName":"my-newest-screen","TitleCaseName":"My Newest Screen"}
+{"CamelCaseName":"MyNewestScreen","LowerCamelCaseName":"myNewestScreen","DashName":"my-newest-screen","TitleCaseName":"My Newest Screen","DbColumns":[{"ColumnName":"Id","DataType":"int"},{"ColumnName":"Title","DataType":"varchar"},{"ColumnName":"IsActive","DataType":"bit"}]}

@@ -10,9 +10,32 @@
 	parameters = JsonConvert.DeserializeObject<Parameters>(jsonParameters);
 #>
 export class <#= parameters.CamelCaseName #> {
-  id: number;
-  title: string;
-  isActive: boolean;
+<#
+	foreach(var field in parameters.DbColumns) {
+		switch (field.DataType) {
+			case "varchar":
+#>
+	<#= field.ColumnName.Substring(0, 1).ToLower() + field.ColumnName.Substring(1) #>: string;
+<#
+				break;
+			case "int":
+#>
+	<#= field.ColumnName.Substring(0, 1).ToLower() + field.ColumnName.Substring(1) #>: number;
+<#
+				break;
+			case "bit":
+#>
+	<#= field.ColumnName.Substring(0, 1).ToLower() + field.ColumnName.Substring(1) #>: boolean;
+<#
+				break;
+			default:
+#>
+	//<#= field.ColumnName.ToLower() #> - <#= field.DataType #>
+<#
+				break;
+		}
+	}
+#>
 
   isDeleting: boolean = false;
 }

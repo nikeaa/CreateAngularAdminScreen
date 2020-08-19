@@ -29,9 +29,29 @@ export class <#= parameters.CamelCaseName #>Service extends ServiceBase<<#= para
 
   buildServiceObject(form: FormGroup): <#= parameters.CamelCaseName #> {
     const serviceObject: <#= parameters.CamelCaseName #> = {
+<#
+	foreach(var field in parameters.DbColumns) {
+        string columnName = field.ColumnName.Substring(0, 1).ToLower() + field.ColumnName.Substring(1);
+        string dataType = field.DataType.ToLower();
+
+		if (columnName == "id") {
+#>
       id: 0,
-      title: form.controls.title.value,
-      isActive: form.controls.isActive.value == 'true' ? true : false,
+<#
+        }
+        else if (dataType == "bit") {
+#>
+      <#= columnName #>: form.controls.<#= columnName #>.value == 'true' ? true : false,
+<#
+        }
+        else {
+#>
+      <#= columnName #>: form.controls.<#= columnName #>.value,
+<#
+        }
+    }
+#>
+
       isDeleting: false
     };
 
